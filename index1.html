@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LostSMP - Ultimate Minecraft Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: #0d0e12;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: -150px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(0, 198, 255, 0.15) 0%, rgba(13, 14, 18, 0) 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Navbar */
+        nav {
+            width: 100%;
+            max-width: 1100px;
+            padding: 24px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            font-size: 1.35rem;
+            letter-spacing: 0.5px;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .logo-box {
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-box svg {
+            width: 20px;
+            height: 20px;
+            fill: #00c6ff;
+        }
+
+        .nav-right {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .menu-container {
+            position: relative;
+        }
+
+        .menu-toggle-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            padding: 9px 16px;
+            border-radius: 100px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.88rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(12px);
+            transition: all 0.2s ease;
+        }
+
+        .menu-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 130%;
+            right: 0;
+            width: 190px;
+            background: rgba(20, 22, 29, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 16px;
+            padding: 8px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 198, 255, 0.1);
+            backdrop-filter: blur(16px);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px) scale(0.95);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .dropdown-menu.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .menu-item {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            padding: 10px 14px;
+            border-radius: 10px;
+            text-align: left;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            width: 100%;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            transform: translateX(3px);
+        }
+
+        .menu-item.active {
+            background: rgba(0, 198, 255, 0.1);
+            color: #00c6ff;
+        }
+
+        .btn-auth {
+            background: #ffffff;
+            color: #0d0e12;
+            border: none;
+            padding: 9px 20px;
+            border-radius: 100px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.88rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-auth:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .user-nav-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 5px 14px 5px 6px;
+            border-radius: 100px;
+            cursor: pointer;
+        }
+
+        .user-head-img {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+        }
+
+        .user-nav-name {
+            font-weight: 600;
+            font-size: 0.88rem;
+        }
+
+        .page-section {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-top: 40px;
+            padding: 0 20px;
+            max-width: 800px;
+            width: 100%;
+            z-index: 1;
+        }
+
+        .page-section.active {
+            display: flex;
+        }
+
+        .announcement-badge {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 7px 16px;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 28px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .badge-dot {
+            width: 7px;
+            height: 7px;
+            background-color: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #10b981;
+        }
+
+        h1.hero-title {
+            font-size: 3.8rem;
+            font-weight: 800;
+            line-height: 1.08;
+            margin-bottom: 16px;
+            color: #ffffff;
+        }
+
+        h1.hero-title span {
+            background: linear-gradient(180deg, #ffffff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            color: #8a8f9d;
+            font-size: 1.1rem;
+            max-width: 520px;
+            margin-bottom: 35px;
+        }
+
+        .search-ip-box {
+            width: 100%;
+            max-width: 480px;
+            background: #14161d;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 8px 8px 8px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            margin-bottom: 18px;
+        }
+
+        .search-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .search-icon {
+            width: 18px;
+            height: 18px;
+            fill: #64748b;
+        }
+
+        .ip-text {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .copy-pill {
+            font-size: 0.8rem;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .btn-discord-laby {
+            width: 100%;
+            max-width: 480px;
+            background: #5865F2;
+            color: #ffffff;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 40px;
+        }
+
+        .features-pill-row {
+            display: flex;
+            gap: 20px;
+            color: #64748b;
+            font-size: 0.88rem;
+            font-weight: 600;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .check-dot {
+            width: 5px;
+            height: 5px;
+            background: #00c6ff;
+            border-radius: 50%;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 16px;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .card {
+            background: #14161d;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
+            padding: 24px;
+            text-align: left;
+        }
+
+        .rank-card {
+            text-decoration: none;
+            display: block;
+        }
+
+        .card-icon-box {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .card-icon-box svg {
+            width: 20px;
+            height: 20px;
+            fill: #ffffff;
+        }
+
+        .card h3 {
+            font-size: 1.15rem;
+            margin-bottom: 8px;
+        }
+
+        .card p {
+            color: #8a8f9d;
+            font-size: 0.88rem;
+            line-height: 1.6;
+        }
+
+        .buy-hint {
+            display: inline-block;
+            margin-top: 16px;
+            font-size: 0.82rem;
+            color: #00c6ff;
+            font-weight: 700;
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-card {
+            width: 90%;
+            max-width: 420px;
+            background: #14161d;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 28px;
+            position: relative;
+            text-align: left;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.2rem;
+            color: #64748b;
+            cursor: pointer;
+        }
+
+        .close-btn:hover { color: #fff; }
+
+        .modal-card h2 {
+            font-size: 1.35rem;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 800;
+        }
+
+        .input-group {
+            margin-bottom: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .input-group label {
+            font-size: 0.82rem;
+            color: #8a8f9d;
+            font-weight: 600;
+        }
+
+        .input-group input, .input-group select {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 12px 14px;
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: #ffffff;
+            color: #0d0e12;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .switch-text {
+            text-align: center;
+            margin-top: 14px;
+            font-size: 0.82rem;
+            color: #8a8f9d;
+        }
+
+        .switch-text span {
+            color: #ffffff;
+            cursor: pointer;
+            font-weight: 700;
+            text-decoration: underline;
+        }
+
+        .error-msg {
+            color: #ef4444;
+            font-size: 0.82rem;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .profile-preview-box {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 14px;
+            border-radius: 16px;
+            margin-bottom: 18px;
+        }
+
+        .skin-full-preview {
+            width: 55px;
+            height: auto;
+        }
+
+        .admin-btn-trigger {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            display: none;
+            font-size: 0.88rem;
+        }
+
+        /* NEW ADMIN DASHBOARD, CONSOLE & POWER TOGGLE STYLES */
+        .admin-section-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #00c6ff;
+            margin: 15px 0 8px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .dashboard-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 10px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .dashboard-card h4 {
+            font-size: 0.72rem;
+            color: #8a8f9d;
+            margin-bottom: 4px;
+        }
+
+        .dashboard-card span {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #10b981;
+        }
+
+        .power-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 10px 14px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .power-status-badge {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #10b981;
+        }
+
+        .power-toggle-btn {
+            background: #ef4444;
+            color: #ffffff;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .power-toggle-btn.off {
+            background: #10b981;
+        }
+
+        .console-box {
+            background: #090a0d;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 0.78rem;
+            color: #a7f3d0;
+            height: 110px;
+            overflow-y: auto;
+            margin-bottom: 8px;
+            text-align: left;
+        }
+
+        .console-input-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .console-input-row input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 8px 12px;
+            border-radius: 8px;
+            color: #ffffff;
+            font-family: monospace;
+            font-size: 0.8rem;
+            outline: none;
+        }
+
+        .console-input-row button {
+            background: #00c6ff;
+            color: #0d0e12;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .admin-table-container {
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.82rem;
+        }
+
+        .admin-table th, .admin-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .admin-table th {
+            background: rgba(255, 255, 255, 0.04);
+            color: #8a8f9d;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav>
+        <a href="#" class="logo">
+            <div class="logo-box">
+                <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            </div>
+            <span>LOST</span>
+        </a>
+
+        <div class="nav-right">
+            <div class="menu-container">
+                <button class="menu-toggle-btn" onclick="toggleMenu(event)">
+                    Menu ☰
+                </button>
+
+                <div class="dropdown-menu" id="guiMenu">
+                    <button class="menu-item active" id="btn-tab-home" onclick="selectTab('home', this)">Home</button>
+                    <button class="menu-item" id="btn-tab-ranks" onclick="selectTab('ranks', this)">Ranks</button>
+                    <button class="menu-item" id="btn-tab-rules" onclick="selectTab('rules', this)">Rules</button>
+                </div>
+            </div>
+
+            <div id="authNavContainer">
+                <button class="btn-auth" onclick="openModal('authModal')">Login / Register</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HOME SECTION -->
+    <main id="home" class="page-section active">
+        <div class="announcement-badge" onclick="openPlayersModal()">
+            <span class="badge-dot"></span> 
+            <span id="serverStatusText">Connecting to server...</span>
+        </div>
+
+        <h1 class="hero-title">Your Minecraft<br><span>Lifesteal Hub</span></h1>
+
+        <p class="subtitle">Skins, ranks, intense PvP & custom hearts. Everything you need in one place.</p>
+
+        <div class="search-ip-box" onclick="copyIP()" id="ipBox">
+            <div class="search-left">
+                <svg class="search-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 11.99 14 9.5 14z"/></svg>
+                <span class="ip-text">141.11.237.6:26255</span>
+            </div>
+            <span class="copy-pill" id="copyText">Copy IP</span>
+        </div>
+
+        <a href="https://discord.gg/EUQavDfyb" class="btn-discord-laby" target="_blank">
+            Join Discord Community
+        </a>
+
+        <div class="features-pill-row">
+            <div class="feature-item"><span class="check-dot"></span> Free to Join</div>
+            <div class="feature-item"><span class="check-dot"></span> Java Edition Only</div>
+            <div class="feature-item"><span class="check-dot"></span> 24/7 Uptime</div>
+        </div>
+    </main>
+
+    <!-- RANKS SECTION -->
+    <section id="ranks" class="page-section">
+        <h1 class="hero-title">Server <span>Ranks</span></h1>
+        <p class="subtitle">Click on any rank to open a ticket on Discord and buy it.</p>
+        
+        <div class="grid-container">
+            <a href="https://discord.gg/EUQavDfyb" target="_blank" class="card rank-card">
+                <div class="card-icon-box">
+                    <svg viewBox="0 0 24 24"><path d="M12 2.69c.8 4.14 3.5 6.1 3.5 9.31 0 3.31-2.69 6-6 6s-6-2.69-6-6c0-2.76 1.88-4.96 4.38-5.74C8 8 9 10 10.5 10c1.5 0 2.5-1.5 1.5-7.31z"/></svg>
+                </div>
+                <h3>LOST Rank</h3>
+                <p>• 20 Hearts<br>• Kit Elytra Mace<br>• Custom Name Color</p>
+                <span class="buy-hint">Buy via Ticket →</span>
+            </a>
+
+            <a href="https://discord.gg/EUQavDfyb" target="_blank" class="card rank-card">
+                <div class="card-icon-box">
+                    <svg viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>
+                </div>
+                <h3>MVP Rank</h3>
+                <p>• 10 Hearts<br>• Kit Mace (Every 50s)<br>• Custom Name Color</p>
+                <span class="buy-hint">Buy via Ticket →</span>
+            </a>
+
+            <a href="https://discord.gg/EUQavDfyb" target="_blank" class="card rank-card">
+                <div class="card-icon-box">
+                    <svg viewBox="0 0 24 24"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg>
+                </div>
+                <h3>VIP Rank</h3>
+                <p>• 5 Hearts<br>• Basic Rank Kit<br>• Custom Name Color</p>
+                <span class="buy-hint">Buy via Ticket →</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- RULES SECTION -->
+    <section id="rules" class="page-section">
+        <h1 class="hero-title">Server <span>Rules</span></h1>
+        <p class="subtitle">Respect the community rules for a fair gameplay experience.</p>
+
+        <div class="grid-container">
+            <div class="card">
+                <h3>1. No Cheating</h3>
+                <p>Hacks, x-ray, or exploits will result in a permanent ban without warning.</p>
+            </div>
+            <div class="card">
+                <h3>2. Respect Players</h3>
+                <p>No toxicity, hate speech, or severe harassment in public chat.</p>
+            </div>
+            <div class="card">
+                <h3>3. Fair Play</h3>
+                <p>Duping items or abusing server bugs is strictly prohibited.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- AUTH MODAL -->
+    <div class="modal-overlay" id="authModal">
+        <div class="modal-card">
+            <span class="close-btn" onclick="closeModal('authModal')">&times;</span>
+            <h2 id="authTitle">Minecraft Login</h2>
+            
+            <div class="input-group">
+                <label>Minecraft Username</label>
+                <input type="text" id="usernameInput" placeholder="Ex: Steve">
+            </div>
+
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="passwordInput" placeholder="••••••••">
+            </div>
+
+            <button class="submit-btn" id="authSubmitBtn" onclick="handleAuth()">Login</button>
+            <p class="error-msg" id="errorMsg"></p>
+
+            <p class="switch-text" id="switchText">
+                Don't have an account? <span onclick="toggleAuthMode()">Register here</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- EDIT PROFILE MODAL -->
+    <div class="modal-overlay" id="profileModal">
+        <div class="modal-card">
+            <span class="close-btn" onclick="closeModal('profileModal')">&times;</span>
+            <h2>Edit Profile</h2>
+            
+            <div class="profile-preview-box">
+                <img id="editSkinPreview" class="skin-full-preview" src="" alt="Skin">
+                <div>
+                    <h3 id="editUsernameDisplay" style="font-size: 1.1rem; font-weight: 700;">-</h3>
+                    <p style="color: #00c6ff; font-size: 0.82rem; font-weight: 600;">Rank: <span id="displayUserRank">MEMBER</span></p>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Your Rank</label>
+                <select id="userRankSelect" onchange="handleRankSelection()">
+                    <option value="MEMBER">MEMBER (Default)</option>
+                    <option value="VIP">VIP</option>
+                    <option value="MVP">MVP</option>
+                    <option value="LOST">LOST</option>
+                    <option value="OWNER">OWNER 👑</option>
+                </select>
+            </div>
+
+            <button class="admin-btn-trigger" id="adminPanelBtn" onclick="openAdminPanel()">Admin Panel 🛠️</button>
+            <button class="submit-btn" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; margin-top: 12px;" onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <!-- MERGED OWNER / ADMIN PANEL MODAL (DASHBOARD + POWER TOGGLE + CONSOLE + USERS) -->
+    <div class="modal-overlay" id="adminModal">
+        <div class="modal-card" style="max-width: 500px;">
+            <span class="close-btn" onclick="closeModal('adminModal')">&times;</span>
+            <h2 style="color: #ef4444; margin-bottom: 10px;">👑 Admin Control Panel</h2>
+
+            <!-- 1. DASHBOARD -->
+            <div class="admin-section-title">📊 Server Dashboard</div>
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <h4>PLAYERS</h4>
+                    <span id="dashPlayers">0/20</span>
+                </div>
+                <div class="dashboard-card">
+                    <h4>RAM USAGE</h4>
+                    <span id="dashRam">1420MB / 4096MB</span>
+                </div>
+            </div>
+
+            <!-- 2. POWER TOGGLE (ON / OFF) -->
+            <div class="power-bar">
+                <div>
+                    <div style="font-size: 0.72rem; color: #8a8f9d;">SERVER POWER SWITCH</div>
+                    <div class="power-status-badge" id="powerStatus">STATE: ONLINE (ON)</div>
+                </div>
+                <button class="power-toggle-btn" id="powerBtn" onclick="toggleServerPower()">TURN OFF</button>
+            </div>
+
+            <!-- 3. CONSOLE CONTROL -->
+            <div class="admin-section-title">💻 Server Console</div>
+            <div class="console-box" id="consoleLogs">
+                [SYSTEM] Server loaded successfully.<br>
+                [INFO] DeluxeMenus & Plugins initialized.<br>
+                [INFO] Ready for admin commands...
+            </div>
+            <div class="console-input-row">
+                <input type="text" id="consoleInput" placeholder="Type command (e.g. op, ban, maintenance)...">
+                <button onclick="sendConsoleCommand()">Send</button>
+            </div>
+
+            <!-- 4. REGISTERED USERS TABLE -->
+            <div class="admin-section-title">👥 Registered Users</div>
+            <div class="admin-table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Password</th>
+                            <th>Rank</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        let isLoginMode = true;
+        let isServerOnline = true;
+
+        function copyIP() {
+            var ip = "141.11.237.6:26255";
+            navigator.clipboard.writeText(ip);
+            alert("IP Copied: " + ip);
+        }
+
+        function toggleMenu(event) {
+            event.stopPropagation();
+            document.getElementById('guiMenu').classList.toggle('open');
+        }
+
+        function selectTab(tabId, btnElement) {
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.menu-item').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            if(btnElement) btnElement.classList.add('active');
+            document.getElementById('guiMenu').classList.remove('open');
+        }
+
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        function toggleAuthMode() {
+            isLoginMode = !isLoginMode;
+            document.getElementById('authTitle').innerText = isLoginMode ? "Minecraft Login" : "Minecraft Register";
+            document.getElementById('authSubmitBtn').innerText = isLoginMode ? "Login" : "Register";
+        }
+
+        function handleAuth() {
+            const u = document.getElementById('usernameInput').value.trim();
+            const p = document.getElementById('passwordInput').value.trim();
+            if(!u || !p) return alert("Fill all fields!");
+
+            let users = JSON.parse(localStorage.getItem('smp_users')) || {};
+
+            if (isLoginMode) {
+                if (users[u] && users[u] === p) {
+                    sessionStorage.setItem('current_user', u);
+                    closeModal('authModal');
+                    setupLoggedInNav(u);
+                } else alert("Invalid credentials!");
+            } else {
+                users[u] = p;
+                localStorage.setItem('smp_users', JSON.stringify(users));
+                localStorage.setItem(`rank_${u}`, "MEMBER");
+                sessionStorage.setItem('current_user', u);
+                closeModal('authModal');
+                setupLoggedInNav(u);
+            }
+        }
+
+        function setupLoggedInNav(u) {
+            document.getElementById('authNavContainer').innerHTML = `
+                <div class="user-nav-profile" onclick="openProfileModal()">
+                    <img class="user-head-img" src="https://visage.surgeplay.com/head/64/${u}" alt="head">
+                    <span class="user-nav-name">${u}</span>
+                </div>
+            `;
+        }
+
+        function openProfileModal() {
+            const u = sessionStorage.getItem('current_user');
+            if (!u) return;
+            let rank = localStorage.getItem(`rank_${u}`) || "MEMBER";
+
+            document.getElementById('editUsernameDisplay').innerText = u;
+            document.getElementById('displayUserRank').innerText = rank;
+            document.getElementById('userRankSelect').value = rank;
+            document.getElementById('editSkinPreview').src = `https://visage.surgeplay.com/full/120/${u}`;
+            
+            document.getElementById('adminPanelBtn').style.display = (rank === "OWNER") ? "block" : "none";
+            openModal('profileModal');
+        }
+
+        function handleRankSelection() {
+            const u = sessionStorage.getItem('current_user');
+            const selectedRank = document.getElementById('userRankSelect').value;
+            localStorage.setItem(`rank_${u}`, selectedRank);
+            openProfileModal();
+        }
+
+        /* ADMIN PANEL FUNCTIONALITIES (POWER, CONSOLE, USERS) */
+        function openAdminPanel() {
+            closeModal('profileModal');
+            
+            // Render Users Table
+            const tbody = document.getElementById('adminTableBody');
+            tbody.innerHTML = '';
+            let users = JSON.parse(localStorage.getItem('smp_users')) || {};
+            Object.keys(users).forEach(uName => {
+                let uRank = localStorage.getItem(`rank_${uName}`) || 'MEMBER';
+                let tr = document.createElement('tr');
+                tr.innerHTML = `<td><strong>${uName}</strong></td><td style="color:#facc15;">${users[uName]}</td><td><span style="color:#00c6ff;">${uRank}</span></td>`;
+                tbody.appendChild(tr);
+            });
+
+            openModal('adminModal');
+        }
+
+        function toggleServerPower() {
+            isServerOnline = !isServerOnline;
+            const statusTag = document.getElementById('powerStatus');
+            const btn = document.getElementById('powerBtn');
+            const consoleBox = document.getElementById('consoleLogs');
+
+            if (isServerOnline) {
+                statusTag.innerText = "STATE: ONLINE (ON)";
+                statusTag.style.color = "#10b981";
+                btn.innerText = "TURN OFF";
+                btn.className = "power-toggle-btn";
+                consoleBox.innerHTML += `<br><span style="color:#10b981;">[POWER] Server turned ON by Admin.</span>`;
+            } else {
+                statusTag.innerText = "STATE: MAINTENANCE (OFF)";
+                statusTag.style.color = "#ef4444";
+                btn.innerText = "TURN ON";
+                btn.className = "power-toggle-btn off";
+                consoleBox.innerHTML += `<br><span style="color:#ef4444;">[POWER] Maintenance mode toggled (OFF).</span>`;
+            }
+            consoleBox.scrollTop = consoleBox.scrollHeight;
+        }
+
+        function sendConsoleCommand() {
+            const input = document.getElementById('consoleInput');
+            const cmd = input.value.trim();
+            if(!cmd) return;
+
+            const consoleBox = document.getElementById('consoleLogs');
+            consoleBox.innerHTML += `<br><span style="color:#38bdf8;">> ${cmd}</span>`;
+
+            if(cmd.toLowerCase() === 'stop') {
+                toggleServerPower();
+            } else {
+                consoleBox.innerHTML += `<br><span style="color:#a7f3d0;">[CONSOLE] Executed command: /${cmd}</span>`;
+            }
+
+            input.value = '';
+            consoleBox.scrollTop = consoleBox.scrollHeight;
+        }
+
+        function logout() {
+            sessionStorage.removeItem('current_user');
+            location.reload();
+        }
+
+        window.onload = function() {
+            const u = sessionStorage.getItem('current_user');
+            if (u) setupLoggedInNav(u);
+        }
+    </script>
+</body>
+</html>
